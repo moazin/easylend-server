@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 
 from rest_framework import generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -40,6 +40,7 @@ class TransactionSearchView(generics.ListAPIView):
             return super().get_queryset()
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def myExchangeWithEveryoneView(request):
     if request.method == 'GET':
         results = User.objects.raw("select auth_user.id, auth_user.username, ((select sum(amount) from transactions_transaction WHERE from_user_id=%s AND to_user_id=auth_user.id GROUP BY to_user_id)-(select sum(amount) from transactions_transaction WHERE from_user_id=auth_user.id AND to_user_id=%s GROUP BY to_user_id)) AS exchange from auth_user where auth_user.id <> %s", [request.user.id, request.user.id, request.user.id])
