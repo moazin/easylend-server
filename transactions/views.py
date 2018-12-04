@@ -26,7 +26,7 @@ class TransactionListCreateView(generics.ListCreateAPIView):
         else:
             return super().get_serializer_class()
 
-class TransactionSearchView(generics.ListAPIView):
+class MyTransactionsWithEveryone(generics.ListAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionReadSerializer
 
