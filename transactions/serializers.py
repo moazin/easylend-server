@@ -21,3 +21,8 @@ class TransactionCreateSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = '__all__'
         read_only_fields = ('date',)
+
+class ExchangeSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    username = serializers.CharField(max_length=200)
+    exchange = serializers.FloatField()
