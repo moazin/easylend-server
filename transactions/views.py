@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Q
 
@@ -46,3 +46,16 @@ def myExchangeWithEveryoneView(request):
         results = User.objects.raw("select auth_user.id, auth_user.username, ((select sum(amount) from transactions_transaction WHERE from_user_id=%s AND to_user_id=auth_user.id GROUP BY to_user_id)-(select sum(amount) from transactions_transaction WHERE from_user_id=auth_user.id AND to_user_id=%s GROUP BY to_user_id)) AS exchange from auth_user where auth_user.id <> %s", [request.user.id, request.user.id, request.user.id])
         exchanges = ExchangeSerializer(results, many=True)        
         return Response(exchanges.data)
+
+class MyTransactionsWithSomeone(generics.ListAPIView):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionReadSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        if self.request.method == 'GET':
+            user = self.request.user
+            other_guy = get_object_or_404(User, id=self.request.GET.get('id'))
+            return Transaction.objects.filter(from_user=user, to_user=other_guy)
+        else:
+            return super().get_queryset()
