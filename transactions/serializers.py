@@ -24,5 +24,7 @@ class TransactionCreateSerializer(serializers.ModelSerializer):
 
 class ExchangeSerializer(serializers.Serializer):
     id = serializers.IntegerField()
+    first_name = serializers.CharField(max_length=200)
+    last_name = serializers.CharField(max_length=200)
     username = serializers.CharField(max_length=200)
     exchange = serializers.FloatField()
