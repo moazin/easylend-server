@@ -56,6 +56,6 @@ class MyTransactionsWithSomeone(generics.ListAPIView):
         if self.request.method == 'GET':
             user = self.request.user
             other_guy = get_object_or_404(User, id=self.request.GET.get('id'))
-            return Transaction.objects.filter(from_user=user, to_user=other_guy).order_by('-date')
+            return Transaction.objects.filter(Q(from_user=user, to_user=other_guy) | Q(to_user=user, from_user=other_guy)).order_by('-date')
         else:
             return super().get_queryset()
