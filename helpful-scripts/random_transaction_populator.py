@@ -4,7 +4,7 @@ from transactions.models import Transaction
 
 from random import choice, randint
 
-for i in range(100):
+for i in range(10000):
     amount = randint(1, 1000)
     from_user = choice(User.objects.all())
     to_user = choice(User.objects.all())
