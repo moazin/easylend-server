@@ -27,8 +27,9 @@ class TransactionListCreateView(generics.ListCreateAPIView):
             return super().get_serializer_class()
 
     def initial(self, request, *args, **kwargs):
-        if request.data['from_user'] != self.request.user.id:
-            self.permission_denied(request, message=getattr(IsAuthenticated, 'message', None))
+        if request.method == 'POST':
+            if request.data['from_user'] != self.request.user.id:
+                self.permission_denied(request, message=getattr(IsAuthenticated, 'message', None))
         return super().initial(request, *args, **kwargs)
 
 class MyTransactionsWithEveryone(generics.ListAPIView):
