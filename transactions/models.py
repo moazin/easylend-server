@@ -6,3 +6,4 @@ class Transaction(models.Model):
     to_user = models.ForeignKey(User, on_delete=models.CASCADE,)
     amount = models.FloatField()
     date = models.DateTimeField(auto_now_add=True)
+    verified =  models.BooleanField(default=False)
