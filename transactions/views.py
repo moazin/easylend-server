@@ -76,3 +76,12 @@ class VerifyTransaction(generics.UpdateAPIView):
         if request.user.id != obj.to_user.id:
             self.permission_denied(request, message=getattr(IsAuthenticated, 'message', None))
         return super().check_object_permissions(request, obj)
+
+class UnVerifiedTransactions(generics.ListAPIView):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionReadSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(to_user=self.request.user, verified=False)
