@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 import json
 
-from transactions.serializers import TransactionReadSerializer, TransactionCreateSerializer, ExchangeSerializer
+from transactions.serializers import TransactionReadSerializer, TransactionCreateSerializer, ExchangeSerializer, TransactionVerificationSerializer
 from transactions.models import Transaction
 
 class TransactionListCreateView(generics.ListCreateAPIView):
@@ -69,13 +69,19 @@ class MyTransactionsWithSomeone(generics.ListAPIView):
 
 class VerifyTransaction(generics.UpdateAPIView):
     queryset = Transaction.objects.all()
-    serializer_class = TransactionCreateSerializer
+    serializer_class = TransactionVerificationSerializer
     permission_classes = (IsAuthenticated,)
 
     def check_object_permissions(self, request, obj):
         if request.user.id != obj.to_user.id:
             self.permission_denied(request, message=getattr(IsAuthenticated, 'message', None))
         return super().check_object_permissions(request, obj)
+
+    def partial_update(self, request, *args, **kwargs):
+        request.data.update({
+            "verified": True
+        })
+        return super().partial_update(request, *args, **kwargs)
 
 class UnVerifiedTransactions(generics.ListAPIView):
     queryset = Transaction.objects.all()

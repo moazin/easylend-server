@@ -22,6 +22,12 @@ class TransactionCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('date',)
 
+class TransactionVerificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = '__all__'
+        read_only_fields = ('id', 'from_user', 'to_user', 'amount', 'date')
+
 class ExchangeSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     first_name = serializers.CharField(max_length=200)
