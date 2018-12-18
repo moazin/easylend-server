@@ -26,6 +26,7 @@ class TransactionListCreateView(generics.ListCreateAPIView):
         else:
             return super().get_serializer_class()
 
+    # TODO: Do this with object_permission maybe! This is a crude way I think
     def initial(self, request, *args, **kwargs):
         if request.method == 'POST':
             if request.data['from_user'] != self.request.user.id:
@@ -65,3 +66,13 @@ class MyTransactionsWithSomeone(generics.ListAPIView):
             return Transaction.objects.filter(Q(from_user=user, to_user=other_guy) | Q(to_user=user, from_user=other_guy)).order_by('-date')
         else:
             return super().get_queryset()
+
+class VerifyTransaction(generics.UpdateAPIView):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionCreateSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def check_object_permissions(self, request, obj):
+        if request.user.id != obj.to_user.id:
+            self.permission_denied(request, message=getattr(IsAuthenticated, 'message', None))
+        return super().check_object_permissions(request, obj)
