@@ -43,7 +43,7 @@ class TransactionListCreateView(generics.ListCreateAPIView):
         user = User.objects.get(pk=resp.data['to_user'])
         device = user.fcmdevice_set.first()
         if device != None:
-            device.send_message(title='New Transaction', body=f'{first_name} {last_name} gave you {amount}!')
+            device.send_message(title='New Transaction', body=f'{first_name} {last_name} gave you {amount}!', sound='default')
         return resp
 
 class MyTransactionsWithEveryone(generics.ListAPIView):
