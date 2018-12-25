@@ -6,6 +6,7 @@ from rest_framework import generics
 from rest_framework.decorators import api_view, permission_classes 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import status
 
 import json
 
@@ -91,3 +92,18 @@ class UnVerifiedTransactions(generics.ListAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
         return queryset.filter(to_user=self.request.user, verified=False)
+
+class TransactionDeleteView(generics.DestroyAPIView):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionReadSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def check_object_permissions(self, request, obj):
+        if request.user.id != obj.to_user.id:
+            self.permission_denied(request, message=getattr(IsAuthenticated, 'message', None))
+        return super().check_object_permissions(request, obj)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response("{}", status=status.HTTP_204_NO_CONTENT)

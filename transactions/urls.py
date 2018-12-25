@@ -8,5 +8,6 @@ urlpatterns = [
     path('myexchangewitheveryone', views.myExchangeWithEveryoneView),
     path('mytransactionswithsomeone', views.MyTransactionsWithSomeone.as_view()),
     path(r'verifytransaction/<int:pk>/', views.VerifyTransaction.as_view()),
+    path(r'deletetransaction/<int:pk>/', views.TransactionDeleteView.as_view()),
     path('unverifiedtransactions', views.UnVerifiedTransactions.as_view())
 ]
