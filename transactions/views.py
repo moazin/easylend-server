@@ -34,6 +34,18 @@ class TransactionListCreateView(generics.ListCreateAPIView):
                 self.permission_denied(request, message=getattr(IsAuthenticated, 'message', None))
         return super().initial(request, *args, **kwargs)
 
+    def create(self, request, *args, **kwargs):
+        resp = super().create(request, *args, **kwargs)
+        from_user = User.objects.get(pk=resp.data['from_user'])
+        first_name = from_user.first_name
+        last_name = from_user.last_name
+        amount = resp.data['amount']
+        user = User.objects.get(pk=resp.data['to_user'])
+        device = user.fcmdevice_set.first()
+        if device != None:
+            device.send_message(title='New Transaction', body=f'{first_name} {last_name} gave you {amount}!')
+        return resp
+
 class MyTransactionsWithEveryone(generics.ListAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionReadSerializer

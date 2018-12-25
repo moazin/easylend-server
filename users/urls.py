@@ -4,5 +4,6 @@ from . import views
 
 urlpatterns = [
     path('newuser', views.UserCreateView.as_view()),
-    path('myprofile', views.UserProfileView)
+    path('myprofile', views.UserProfileView),
+    path('deletetokens', views.DeleteToken)
 ]

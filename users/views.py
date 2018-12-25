@@ -20,6 +20,13 @@ def UserProfileView(request):
     user_obj = serializers.UserSerializer(request.user)
     return Response(user_obj.data)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def DeleteToken(request):
+    user_obj = request.user
+    user_obj.fcmdevice_set.all().delete()
+    return Response('Successfully deleted tokens!', status=200)
+
 class CustomAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
