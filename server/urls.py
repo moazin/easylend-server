@@ -18,9 +18,12 @@ from django.urls import path, include
 
 from users.views import CustomAuthToken
 
+from fcm_django.api.rest_framework import FCMDeviceAuthorizedViewSet
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-token-auth/', CustomAuthToken.as_view()),
     path('transactions/', include('transactions.urls')),
-    path('users/', include('users.urls'))
+    path('users/', include('users.urls')),
+    path('devices/', FCMDeviceAuthorizedViewSet.as_view({'post': 'create'}), name='create_fcm_device')
 ]
